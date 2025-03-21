@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.intellidish.R
 import com.example.intellidish.api.ApiService
 import com.example.intellidish.api.NetworkClient
+import com.example.intellidish.models.Potluck
 import com.example.intellidish.models.PotluckIngredient
 import com.example.intellidish.models.RemoveAddIngredientsRequest
 import com.example.intellidish.utils.NetworkUtils
@@ -53,18 +54,13 @@ class PotluckIngredientAdapter(
                 val potluckResponse = response.body()!!
                 val potluck = potluckResponse.potluck
                 
-                // Create new list of ingredients
-                val newIngredients = mutableListOf<PotluckIngredient>()
-                potluck.participants.forEach { participant ->
-                    participant.ingredients?.forEach { ing ->
-                        newIngredients.add(PotluckIngredient(ing, participant.user.name))
-                    }
-                }
+                val newIngredients = createIngredientList(potluck)
 
                 // Check if there are actual changes before updating UI
                 withContext(Dispatchers.Main) {
                     updateUI(newIngredients)
                 }
+
             } else {
                 Log.e("PotluckAdapter", "Failed to fetch potluck details: ${response.errorBody()?.string()}")
             }
@@ -72,6 +68,17 @@ class PotluckIngredientAdapter(
             Log.e("PotluckAdapter", "Error fetching potluck details: ${e.message}")
             throw e
         }
+    }
+
+    private fun createIngredientList(potluck: Potluck): List<PotluckIngredient> {
+        val newIngredients = mutableListOf<PotluckIngredient>()
+        potluck.participants.forEach { participant ->
+            participant.ingredients?.forEach { ing ->
+                newIngredients.add(PotluckIngredient(ing, participant.user.name))
+            }
+        }
+
+        return newIngredients
     }
 
     private fun updateUI(newIngredients: List<PotluckIngredient>) {
