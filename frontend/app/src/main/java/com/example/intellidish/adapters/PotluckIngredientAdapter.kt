@@ -55,11 +55,7 @@ class PotluckIngredientAdapter(
                 val potluck = potluckResponse.potluck
                 
                 val newIngredients = createIngredientList(potluck)
-
-                // Check if there are actual changes before updating UI
-                withContext(Dispatchers.Main) {
-                    updateUI(newIngredients)
-                }
+                updateUI(newIngredients)
 
             } else {
                 Log.e("PotluckAdapter", "Failed to fetch potluck details: ${response.errorBody()?.string()}")
@@ -71,6 +67,7 @@ class PotluckIngredientAdapter(
     }
 
     private fun createIngredientList(potluck: Potluck): List<PotluckIngredient> {
+
         val newIngredients = mutableListOf<PotluckIngredient>()
         potluck.participants.forEach { participant ->
             participant.ingredients?.forEach { ing ->
@@ -81,11 +78,14 @@ class PotluckIngredientAdapter(
         return newIngredients
     }
 
-    private fun updateUI(newIngredients: List<PotluckIngredient>) {
-        if (!ingredients.containsAll(newIngredients) || !newIngredients.containsAll(ingredients)) {
-            ingredients.clear()
-            ingredients.addAll(newIngredients)
-            notifyDataSetChanged()
+    private suspend fun updateUI(newIngredients: List<PotluckIngredient>) {
+        withContext(Dispatchers.Main) {
+            if (!ingredients.containsAll(newIngredients) || !newIngredients.containsAll(ingredients)) {
+                ingredients.clear()
+                ingredients.addAll(newIngredients)
+                notifyDataSetChanged()
+
+            }
         }
     }
 

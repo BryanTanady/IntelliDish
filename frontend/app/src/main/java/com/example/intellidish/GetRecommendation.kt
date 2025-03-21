@@ -136,8 +136,8 @@ class GetRecommendation : AppCompatActivity() {
     }
 
     // Add method to update selected ingredients
-    fun updateSelectedIngredients(ingredients: List<String>) {
-        selectedIngredients.clear()
-        selectedIngredients.addAll(ingredients)
-    }
+//    fun updateSelectedIngredients(ingredients: List<String>) {
+//        selectedIngredients.clear()
+//        selectedIngredients.addAll(ingredients)
+//    }
 } 
