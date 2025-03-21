@@ -63,11 +63,7 @@ class PotluckIngredientAdapter(
 
                 // Check if there are actual changes before updating UI
                 withContext(Dispatchers.Main) {
-                    if (!ingredients.containsAll(newIngredients) || !newIngredients.containsAll(ingredients)) {
-                        ingredients.clear()
-                        ingredients.addAll(newIngredients)
-                        notifyDataSetChanged()
-                    }
+                    updateUI(newIngredients)
                 }
             } else {
                 Log.e("PotluckAdapter", "Failed to fetch potluck details: ${response.errorBody()?.string()}")
@@ -75,6 +71,14 @@ class PotluckIngredientAdapter(
         } catch (e: IOException) {
             Log.e("PotluckAdapter", "Error fetching potluck details: ${e.message}")
             throw e
+        }
+    }
+
+    private fun updateUI(newIngredients: List<PotluckIngredient>) {
+        if (!ingredients.containsAll(newIngredients) || !newIngredients.containsAll(ingredients)) {
+            ingredients.clear()
+            ingredients.addAll(newIngredients)
+            notifyDataSetChanged()
         }
     }
 
